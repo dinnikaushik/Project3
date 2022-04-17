@@ -97,7 +97,7 @@ jobs:
           command: |
             cd frontend
             sudo apt install nodejs
-            npm i
+            npm install
             npm run test
            
       # Your job code here
@@ -117,7 +117,7 @@ jobs:
           command: |
             cd backend
             sudo apt install nodejs
-            npm i
+            npm install
             npm run test
             # Your code here
       # Your job code here
@@ -136,8 +136,8 @@ jobs:
           name: Scan front-end
           command: |
             cd frontend
-            npm i
-            npm audit fix --audit-level=critical --force
+            npm install
+            npm audit fix --audit-level=critical
       # Your job code here
 
   scan-backend:
