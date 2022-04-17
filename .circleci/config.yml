@@ -178,7 +178,7 @@ jobs:
               ansible-playbook deploy-backend.yml -i inventory.txt
               
 workflows:
-  default:
+  myworkflow:
     jobs:
       - deploy-infrastructure:
       - configure-infrastructure:
