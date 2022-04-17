@@ -44,4 +44,4 @@ jobs:
 workflows:
   myworkflow:
     jobs:
-      - deploy-infrastructure:
+    - deploy-infrastructure:
