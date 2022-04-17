@@ -207,6 +207,103 @@ jobs:
             - project/.circleci/ansible/inventory.txt
       - destroy-environment 
       
+  deploy-frontend:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            
+            cd frontend
+            yum install -y curl tar gzip curl
+            curl -sL https://rpm.nodesource.com/setup_10.x | bash -
+            yum install -y nodejs
+  
+      - run:
+          name: Get backend url and setup environment variables
+          command: |
+            BACKEND_IP=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
+            export API_URL="http://${BACKEND_IP}:3030"
+            echo "${BACKEND_IP}"
+            echo "${API_URL}"
+            echo ENVIRONMENT=production > "frontend/.env"
+            echo API_URL=${API_URL} >> "frontend/.env"
+            cat frontend/.env
+      - run:
+          name: Build frontend
+          command: |
+            cd frontend
+            npm install
+            npm run build
+      - run:
+          name: Deploy frontend objects
+          command: |
+            aws s3 cp ./frontend/dist "s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}" --recursive
+      - persist_to_workspace:
+          root: .
+          paths:
+            - ./frontend/dist 
+      - destroy-environment:
+          to: "FE"
+
+  deploy-backend: 
+    docker:
+      - image: python:3.7-alpine3.11
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: ["f3:b2:95:76:8d:d3:d9:27:d1:00:cd:08:60:6a:99:58"]
+
+      - attach_workspace:
+          at: ~/
+
+      - run:
+          name: Install dependencies
+          command: |  
+            pip install --upgrade pip
+            pip install awscli
+            apk add --update nodejs npm ansible zip
+      - run:
+          name: Deploy backend
+          command: |
+              cd backend
+              apk add --update nodejs-npm
+              apk add --update npm
+              npm install
+              npm run build
+              echo build successful
+      - run:
+          name: Add env vars
+          command: |
+              echo ENVIROMENT=production > "backend/dist/.env"
+              echo TYPEORM_CONNECTION=postgres >> "backend/dist/.env"
+              echo TYPEORM_ENTITIES=./modules/domain/**/*.entity{.ts,.js} >> "backend/dist/.env"
+              echo TYPEORM_HOST=$TYPEORM_HOST >> "backend/dist/.env"
+              echo TYPEORM_PORT=$TYPEORM_PORT >> "backend/dist/.env"
+              echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> "backend/dist/.env"
+              echo TYPEORM_MIGRATIONS=$TYPEORM_MIGRATIONS >> "backend/dist/.env"
+              echo TYPEORM_MIGRATIONS_DIR=$TYPEORM_MIGRATIONS_DIR >> "backend/dist/.env"
+              echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> "backend/dist/.env"
+              echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/dist/.env"
+      - run:
+          name: Configure server
+          command: |    
+              cd /root/project/backend/dist
+              tar czf dist.tar.gz .
+              mkdir -p ~/project/.circleci/ansible/roles/deploy/files/
+              mv dist.tar.gz ~/project/.circleci/ansible/roles/deploy/files/
+              cd /root/project/backend/node_modules
+              tar czf node_modules.tar.gz .
+              mv node_modules.tar.gz ~/project/.circleci/ansible/roles/deploy/files/
+      - run:
+          name: Run Ansible
+          command: |
+            cd /root/project/.circleci/ansible
+              echo "Contents  of the inventory.txt file is _____________________________________>>"
+              cat inventory.txt
+              ansible-playbook deploy-backend.yml -i inventory.txt
 workflows:
   default:
     jobs:
@@ -225,3 +322,8 @@ workflows:
           filters:
             branches:
               only: [main]
+
+      - deploy-frontend:
+          requires: [configure-infrastructure]
+      - deploy-backend:
+          requires: [configure-infrastructure]
