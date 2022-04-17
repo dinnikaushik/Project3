@@ -160,7 +160,6 @@ jobs:
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
-
   deploy-infrastructure:
     docker:
       - image: amazon/aws-cli
@@ -173,7 +172,6 @@ jobs:
           command: |
                 yum -y install tar
                 yum -y install gzip
-            
       - run:
           name: Ensure back-end infrastructure exists
           command: |
@@ -182,7 +180,6 @@ jobs:
               --tags project=udacity-backend \
               --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
-              
       - run:
           name: Ensure front-end infrastructure exist
           command: |
@@ -206,7 +203,6 @@ jobs:
           paths:
             - project/.circleci/ansible/inventory.txt
       - destroy-environment 
-
   configure-infrastructure:
     docker:
       - image: python:3.7-alpine3.11
@@ -241,7 +237,6 @@ jobs:
       #       cd .circleci/ansible/roles/configure-prometheus-node-exporter/tasks
       #       ansible-playbook main.yml -i ../../../../inventory.txt
       - destroy-environment
-
   run-migrations:
     docker:
       - image: circleci/node:14.18.1
@@ -266,7 +261,6 @@ jobs:
               curl https://kvdb.io/Nucr3yB6RM75Sz5neM8QEo/migration_${CIRCLE_WORKFLOW_ID:0:7} -d '1'
             fi
       - destroy-environment
-      
   deploy-frontend:
     docker:
       - image: amazon/aws-cli
@@ -307,7 +301,6 @@ jobs:
             - ./frontend/dist 
       - destroy-environment:
           to: "FE"
-
   deploy-backend: 
     docker:
       - image: python:3.7-alpine3.11
@@ -315,10 +308,8 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints: ["32:3d:50:75:a6:18:19:3b:ae:a7:e3:f9:f3:61:31:84"]
-
       - attach_workspace:
           at: ~/
-
       - run:
           name: Install dependencies
           command: |  
