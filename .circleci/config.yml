@@ -366,7 +366,6 @@ jobs:
               ansible-playbook deploy-backend.yml -i inventory.txt
       - destroy-environment:
           to: "backend"
-  
   smoke-test:
     docker: 
       - image: python:3.7-alpine3.11
@@ -390,7 +389,6 @@ jobs:
             URL="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website-us-west-2.amazonaws.com"
             echo ${URL}
       - destroy-environment
-
 workflows:
   default:
     jobs:
