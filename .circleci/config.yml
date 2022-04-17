@@ -138,7 +138,7 @@ jobs:
             cd frontend
             npm install
             npm install oauth-sign@^0.9.0
-            npm audit fix --audit-level=critical
+            npm audit fix --audit-level=critical --force
       # Your job code here
 
   scan-backend:
@@ -156,7 +156,7 @@ jobs:
           command: |
             cd backend
             npm i
-            npm audit fix --audit-level=critical --force
+            npm audit --audit-level=critical
       # Your job code here
       - save_cache:
           paths: [backend/node_modules]
