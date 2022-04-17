@@ -12,7 +12,6 @@ jobs:
           command: |
                 yum -y install tar
                 yum -y install gzip
-            
       - run:
           name: Ensure back-end infrastructure exists
           command: |
@@ -21,7 +20,6 @@ jobs:
               --tags project=udacity-backend \
               --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
-              
       - run:
           name: Ensure front-end infrastructure exist
           command: |
@@ -39,15 +37,11 @@ jobs:
               --output text >> backend_url.txt
               curl  -d $(cat backend_url.txt) https://kvdb.io/Nucr3yB6RM75Sz5neM8QEo/backendurl_${CIRCLE_WORKFLOW_ID:0:7}
               curl https://kvdb.io/Nucr3yB6RM75Sz5neM8QEo/backendurl_${CIRCLE_WORKFLOW_ID:0:7} >> ./.circleci/ansible/inventory.txt
-                   
       - persist_to_workspace:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
-     
 workflows:
   myworkflow:
     jobs:
       - deploy-infrastructure:
-
-         
