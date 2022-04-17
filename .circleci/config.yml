@@ -44,7 +44,7 @@ jobs:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
-      - destroy-environment 
+     
       
   configure-infrastructure:
     docker:
@@ -79,7 +79,7 @@ jobs:
       #     command: |
       #       cd .circleci/ansible/roles/configure-prometheus-node-exporter/tasks
       #       ansible-playbook main.yml -i ../../../../inventory.txt
-      - destroy-environment
+  
   deploy-frontend:
     docker:
       - image: amazon/aws-cli
@@ -118,8 +118,7 @@ jobs:
           root: .
           paths:
             - ./frontend/dist 
-      - destroy-environment:
-          to: "FE"
+      
 
   deploy-backend: 
     docker:
