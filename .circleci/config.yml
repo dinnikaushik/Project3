@@ -27,7 +27,8 @@ commands:
                 aws cloudformation delete-stack \
                 --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
                 aws cloudformation delete-stack \
-                --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7} 
+                --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
+                --region us-east-1
               fi
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
@@ -190,10 +191,7 @@ jobs:
               --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"\
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
               --region us-east-1
-              --AWS_Access_Key_ID ASIAUWYB7I2WUJQZ5HHI
-              --AWS_Secret_Access_Key djH2no5K/3GePz5lDPKqjb8SF29o/yKzCaPCyvQ2
-              --AWS_session_token FwoGZXIvYXdzEEMaDMe9q9lmDqOFPWopMyLVASD4T9gxuc7CeFgv7GpACavrULi9u9FeweAKus1KGLeX0osczUDUXbuikyE5x71xrfJ9VhBqUua0ux729LTzAcWePzTnD0LtAFhK3IGofOqXwP+7RCIAIbWHdELIO2nXxOXJ16UxnwutcoEQpJ3HqVnJHVyMdR/gXY+nO2NNRi/02vTkrPRlMi/7wp1BPejA+QYJ1nrfT5hzr7A0rvkqgxT/Jpa77rhA0Ct58qjdS7sEfa3UZS39L6wfZbXCh/MknsyFK3564MXGn74/FElfBqtY0pmZnSjXwPaSBjIt0hRsrAxbnDy/q2utAkHvu2GFzJFqMZWknXhjjoAByanas0X/gtWYorUQxIC8
-              
+             
       - run:
           name: Add back-end ip to ansible inventory
           command: |
@@ -203,7 +201,7 @@ jobs:
               --output text >> backend_url.txt
               curl  -d $(cat backend_url.txt) https://kvdb.io/Nucr3yB6RM75Sz5neM8QEo/backendurl_${CIRCLE_WORKFLOW_ID:0:7}
               curl https://kvdb.io/Nucr3yB6RM75Sz5neM8QEo/backendurl_${CIRCLE_WORKFLOW_ID:0:7} >> ./.circleci/ansible/inventory.txt
-                   
+              --region us-east-1     
       - persist_to_workspace:
           root: ~/
           paths:
