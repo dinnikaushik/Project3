@@ -31,7 +31,7 @@ commands:
                 --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
                 aws cloudformation delete-stack \
                 --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
-                --region us-east-1
+                --region us-west-1
               fi
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
@@ -184,7 +184,7 @@ jobs:
               --tags project=udacity-backend \
               --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
-              --region us-east-1
+              --region us-west-1
       - run:
           name: Ensure front-end infrastructure exist
           command: |
@@ -193,7 +193,7 @@ jobs:
               --tags project=udacity-frontend \
               --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"\
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
-              --region us-east-1
+              --region us-west-1
              
       - run:
           name: Add back-end ip to ansible inventory
@@ -204,7 +204,7 @@ jobs:
               --output text >> backend_url.txt
               curl  -d $(cat backend_url.txt) https://kvdb.io/Nucr3yB6RM75Sz5neM8QEo/backendurl_${CIRCLE_WORKFLOW_ID:0:7}
               curl https://kvdb.io/Nucr3yB6RM75Sz5neM8QEo/backendurl_${CIRCLE_WORKFLOW_ID:0:7} >> ./.circleci/ansible/inventory.txt
-              --region us-east-1     
+              --region us-west-1     
       - persist_to_workspace:
           root: ~/
           paths:
