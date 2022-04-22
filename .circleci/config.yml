@@ -4,7 +4,6 @@ orbs:
   # welcome: circleci/welcome-orb@0.4.1
   aws-cli: circleci/aws-cli@2.0.3
 jobs:
-
   deploy-infrastructure:
     docker:
       - image: amazon/aws-cli
@@ -26,10 +25,7 @@ jobs:
               --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
               --region us-west-2
-
-
 workflows:
   default:
     jobs:
-      - deploy-infrastructure:
-
+      - deploy-infrastructure
