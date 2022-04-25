@@ -18,12 +18,15 @@ jobs:
                 yum -y install gzip
       - run:
           name: Ensure back-end infrastructure exists
+          command:  |
+            aws configure set default.region us-west-2
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/backend.yml \
               --tags project=udacity-backend \
               --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
+
 workflows:
   default:
     jobs:
