@@ -17,9 +17,11 @@ jobs:
                 yum -y install tar
                 yum -y install gzip
       - run:
-          name: Ensure back-end infrastructure exists
+          name: set default region 
           command:  |
-            aws configure set default.region us-west-2
+            aws configure set default.region us-west-2  
+      - run:
+          name: Ensure back-end infrastructure exists
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/backend.yml \
