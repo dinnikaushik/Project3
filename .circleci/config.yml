@@ -258,11 +258,13 @@ jobs:
           command: |
             cd backend
             npm install
+            npm --update install python3 npm
             npm audit fix --force
             echo "run migration ..."
             npm run migrations > migrations_dump.txt
             echo "migrations dump content ..."
             cat migrations_dump.txt
+           
       - run:
           name: Send database migration status to kvdb.io
           command: |
@@ -405,22 +407,22 @@ jobs:
 workflows:
   default:
     jobs:
-      - build-frontend
-      - build-backend
+     # - build-frontend
+     # - build-backend
      # - test-frontend:
      #     requires: [build-frontend]
      # - test-backend:
      #     requires: [build-backend]
-      - scan-backend:
-          requires: [build-backend]
-      - scan-frontend:
-          requires: [build-frontend]
+     # - scan-backend:
+     #     requires: [build-backend]
+     # - scan-frontend:
+     #     requires: [build-frontend]
      # - deploy-infrastructure:
      #     requires: [test-frontend, test-backend, scan-frontend, scan-backend]
      # - configure-infrastructure:
      #     requires: [deploy-infrastructure]
-      - run-migrations:
-          requires: [scan-frontend, scan-backend]
+      - run-migrations
+     #     requires: [scan-frontend, scan-backend]
      # - deploy-frontend:
      #     requires: [configure-infrastructure]
      # - deploy-backend:
