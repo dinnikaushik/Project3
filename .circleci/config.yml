@@ -51,7 +51,6 @@ commands:
               npm run migrations:revert
             fi
             echo "MIGRATION NOT REVERTED"
-
 jobs:
   build-frontend:
     docker:
@@ -69,7 +68,6 @@ jobs:
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
-
   build-backend:
     docker:
       - image: circleci/node:13.8.0
@@ -86,7 +84,6 @@ jobs:
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
-
   test-frontend:
     docker:
       - image: circleci/node:13.8.0
@@ -106,7 +103,6 @@ jobs:
             npm run test
            
       # Your job code here
-                
   test-backend:
     docker:
       - image: circleci/node:13.8.0
@@ -144,7 +140,6 @@ jobs:
             npm i
             npm audit fix --audit-level=critical --force
       # Your job code here
-
   scan-backend:
     docker:
       - image: circleci/node:13.8.0
@@ -165,7 +160,6 @@ jobs:
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
-
   deploy-infrastructure:
     docker:
       - image: amazon/aws-cli
@@ -217,7 +211,6 @@ jobs:
           paths:
             - project/.circleci/ansible/inventory.txt
       - destroy-environment 
-      
   configure-infrastructure:
     docker:
       - image: python:3.7-alpine3.11
@@ -276,7 +269,6 @@ jobs:
               curl https://kvdb.io/Nucr3yB6RM75Sz5neM8QEo/migration_${CIRCLE_WORKFLOW_ID:0:7} -d '1'
             fi
       - destroy-environment
-        
   deploy-frontend:
     docker:
       - image: amazon/aws-cli
@@ -324,7 +316,6 @@ jobs:
             - ./frontend/dist 
       - destroy-environment:
           to: "FE"
-
   deploy-backend: 
     docker:
       - image: python:3.7-alpine3.11
