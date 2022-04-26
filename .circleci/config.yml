@@ -248,7 +248,7 @@ jobs:
       - destroy-environment
   run-migrations:
     docker:
-      - image: circleci/node:14.18.1
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -258,8 +258,8 @@ jobs:
           command: |
             cd backend
             npm install
-            npm --update install python3 npm
-            npm audit fix --force
+            npm --update
+            npm audit fix
             echo "run migration ..."
             npm run migrations > migrations_dump.txt
             echo "migrations dump content ..."
