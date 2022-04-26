@@ -16,6 +16,7 @@ commands:
           name: Destroy environments
           when: on_fail
           command: |
+              aws configure set default.region us-west-2
               input=<<parameters.to>>
               if [ $input == FE ]   
               then
@@ -25,7 +26,7 @@ commands:
               elif [ $input == backend ] 
               then
                 aws cloudformation delete-stack \
-                  --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
+                --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
               else 
                 aws s3 rm s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
                 aws cloudformation delete-stack \
