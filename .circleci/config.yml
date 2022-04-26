@@ -258,7 +258,7 @@ jobs:
           command: |
             cd backend
             npm install
-            npm audit fix --force
+            npm audit fix --audit-level=critical --force
             echo "run migration ..."
             npm run migrations > migrations_dump.txt
             echo "migrations dump content ..."
