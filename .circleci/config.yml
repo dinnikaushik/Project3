@@ -9,6 +9,10 @@ commands:
         type: string
     steps:
       - run:
+          name: set default region 
+          command:  |
+            aws configure set default.region us-west-2      
+      - run:
           name: Destroy environments
           when: on_fail
           command: |
@@ -168,7 +172,10 @@ jobs:
               --tags project=udacity-backend \
               --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
-              
+      - run:
+          name: set default region 
+          command:  |
+            aws configure set default.region us-west-2              
       - run:
           name: Ensure front-end infrastructure exist
           command: |
@@ -240,7 +247,10 @@ jobs:
             yum install -y curl tar gzip curl
             curl -sL https://rpm.nodesource.com/setup_10.x | bash -
             yum install -y nodejs
-  
+      - run:
+          name: set default region 
+          command:  |
+            aws configure set default.region us-west-2  
       - run:
           name: Get backend url and setup environment variables
           command: |
@@ -257,6 +267,10 @@ jobs:
             cd frontend
             npm install
             npm run build
+      - run:
+          name: set default region 
+          command:  |
+            aws configure set default.region us-west-2      
       - run:
           name: Deploy frontend objects
           command: |
@@ -285,6 +299,10 @@ jobs:
             pip install --upgrade pip
             pip install awscli
             apk add --update nodejs npm ansible zip
+      - run:
+          name: set default region 
+          command:  |
+            aws configure set default.region us-west-2        
       - run:
           name: Deploy backend
           command: |
