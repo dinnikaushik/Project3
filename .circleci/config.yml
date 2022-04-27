@@ -256,14 +256,22 @@ jobs:
       - run:
           name: Run database migration
           command: |
+          #  cd backend
+          #  npm install
+          #  npm audit fix --audit-level=critical --force
+          #  echo "run migration ..."
+          #  npm run migrations > migrations_dump.txt
+          # echo "migrations dump content ..."
+          #  cat migrations_dump.txt
             cd backend
             npm install
-            npm audit fix --audit-level=critical --force
-            echo "run migration ..."
+            npm install typescript
+            npm --update install python3 npm
+            npm run build
+            npm run migrations:revert
+            # Run and sve the migration output
             npm run migrations > migrations_dump.txt
-            echo "migrations dump content ..."
             cat migrations_dump.txt
-           
       - run:
           name: Send database migration status to kvdb.io
           command: |
