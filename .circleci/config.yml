@@ -256,13 +256,13 @@ jobs:
       - run:
           name: Run database migration
           command: |
-          #  cd backend
-          #  npm install
-          #  npm audit fix --audit-level=critical --force
-          #  echo "run migration ..."
-          #  npm run migrations > migrations_dump.txt
-          # echo "migrations dump content ..."
-          #  cat migrations_dump.txt
+            #  cd backend
+            #  npm install
+            #  npm audit fix --audit-level=critical --force
+            #  echo "run migration ..."
+            #  npm run migrations > migrations_dump.txt
+            # echo "migrations dump content ..."
+            #  cat migrations_dump.txt
             cd backend
             npm install
             npm install typescript
