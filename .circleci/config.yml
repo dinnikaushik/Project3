@@ -127,25 +127,24 @@ jobs:
       - checkout
       - restore_cache:
           key: frontend-scan
-      - run:
-          name: scan front-end
+      - run:  
+          name: Scan front-end
           command: |
             cd frontend
-            npm install
+            npm i
             npm audit fix --audit-level=critical --force
-            npm audit --audit-level=critical
           #  exit 1
       - save_cache:
           paths: [backend/node_modules]
           key: fronend-scan
 
-      - slack/notify:
-          event: fail
-          template: basic_fail_1
-      - slack/notify:
-          event: pass
-          mentions: 'Slack Success'
-          template: success_tagged_deploy_1
+      #- slack/notify:
+      #    event: fail
+      #    template: basic_fail_1
+      #- slack/notify:
+      #    event: pass
+      #    mentions: 'Slack Success'
+      #    template: success_tagged_deploy_1
 
   scan-backend:
     docker:
@@ -154,13 +153,12 @@ jobs:
       - checkout
       - restore_cache:
           key: backend-scan
-      - run:
-          name: scan back-end
+      - run:  
+          name: Scan back-end
           command: |
             cd backend
-            npm install
+            npm i
             npm audit fix --audit-level=critical --force
-            npm audit --audit-level=critical
           #  exit 1
       - save_cache:
           paths: [backend/node_modules]
