@@ -618,10 +618,8 @@ workflows:
           requires: [build-backend]
       - scan-backend:
           requires: [build-backend]
-          context: CircleCI
       - scan-frontend:
           requires: [build-frontend]
-          context: CircleCI
       - deploy-infrastructure:
           requires: [test-frontend, test-backend, scan-frontend, scan-backend]
           filters:
