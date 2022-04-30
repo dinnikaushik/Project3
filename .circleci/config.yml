@@ -36,22 +36,34 @@ commands:
               fi
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
-    # parameters:
-      # Add parameter here     
+    parameters:
+      workflow_id:
+        type: string
+      event:
+        type: string    
     steps:
       - run:
           name: Revert migrations
           # Add when this will run
+          when: on_fail
           command: |
             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
-            SUCCESS=$curl https://kvdb.io/Nucr3yB6RM75Sz5neM8QEo/migration_${CIRCLE_WORKFLOW_ID:0:7}
-            if(( $SUCCESS=="1" )); 
+            if ((curl -s http://udapeople-s3-${CIRCLE_WORKFLOW_ID:0:7}.s3-website.us-west-1.amazonaws.com/ | grep "Hello"));
             then
-              cd ~/project/backend
+            # SUCCESS = 1
+            # if(( $SUCCESS==1 )); 
+            # then
+              cd ./project/backend
               npm install
-              npm run migrations:revert
+            #  Add revert code here. You can find this in the Getting Started section.
+              npm run migration:revert
             fi
-            echo "MIGRATION NOT REVERTED"
+  print_workflow_id:
+    parameters:
+      id:
+        type: string
+    steps:
+      - run: echo << parameters.id >>    
 jobs:
   build-frontend:
     docker:
@@ -247,39 +259,97 @@ jobs:
       #       ansible-playbook main.yml -i ../../../../inventory.txt
       - destroy-environment
   run-migrations:
+    # Docker image here that supports NodeJS
     docker:
-      - image: circleci/node:13.8.0
+    - image: circleci/node:13.8.0
+    # <<: *defaults-node
     steps:
+    # Checkout code from git
       - checkout
+      - attach_workspace:
+          at: ./
       - restore_cache:
-          keys: [backend-build-cache]
+          keys: [backend-build]
       - run:
-          name: Run database migration
+          name: Install AWS CLI dependencies
+          working_directory: ./
           command: |
-            #  cd backend
-            #  npm install
-            #  npm audit fix --audit-level=critical --force
-            #  echo "run migration ..."
-            #  npm run migrations > migrations_dump.txt
-            # echo "migrations dump content ..."
-            #  cat migrations_dump.txt
+            sudo apt-get update && sudo apt-get install -yy less
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+     
+      - run:
+          name: check API_URL variable
+          command: |
+            pwd
+            cd backend && ls -la 
+            echo $API_URL
+            cd .. && ls -la
+            cd frontend
+            cat .env
+      - run:
+          name: Run DB migrations
+          working_directory: ./
+          command: |
+            # Your code here
+            pwd
+            cd backend && ls -la
+            npm -v
+            node -v
+            npm i 
+            npm audit fix
+            npm i migrations@1.0.3
+          
+            # npm audit fix --audit-level=critical --force
+            # npm audit fix --force
+            
+            sudo npm run migrations > migration.txt
+            export migration_status=$(cat migration.txt | grep -c "has been executed successfully")
+           
+            
+            echo $migration_status > migration_status.txt
+            cat migration.txt
+            cat migration_status.txt
+      - run:
+          name: Check migration results 
+          command: |
+            # Your code here
+            pwd & ls -la
             cd backend
-            npm install
-            npm install typescript
-            npm --update install python3 npm
-            npm run build
-            #  npm run migrations:revert
-            # Run and save the migration output
-            npm run migrations > migrations_dump.txt
-            cat migrations_dump.txt
-      - run:
-          name: Send database migration status to kvdb.io
-          command: |
-            if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
-            then
-              curl https://kvdb.io/Nucr3yB6RM75Sz5neM8QEo/migration_${CIRCLE_WORKFLOW_ID:0:7} -d '1'
+            pwd & ls -la
+            cat migration.txt
+            if grep -q "has been executed successfully." migration.txt;\
+            then echo "0" > migr_stat;\
+            else echo "1" > migr_stat;\
             fi
-      - destroy-environment
+       
+            # then
+            #   echo "0" > migr_stat
+            # else
+            #   echo "1" > migr_stat
+              
+              # curl -H "Content-Type: text/plain" -H \
+              # "token: 130ac090-6749-4202-95d0-c1746a2dca81" --request PUT --data "1" \
+              # https://api.memstash.io/values/migration_${CIRCLE_WORKFLOW_ID:0:7}
+            # fi
+            
+      - persist_to_workspace:
+          root: ./
+          paths: 
+            - .circleci/ansible/inventory3.txt
+            - .circleci/ansible/api_url.txt
+            - backend/migration.txt
+            - backend/migration_status.txt
+            - backend/migr_stat
+
+     # Here's where you will add some code to rollback on failure      
+      - destroy-environment:
+          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+          event: on_fail
+      - revert-migrations:
+          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
+          event: on_fail
   deploy-frontend:
     docker:
       - image: amazon/aws-cli
@@ -414,25 +484,25 @@ jobs:
 workflows:
   default:
     jobs:
-     # - build-frontend
-     # - build-backend
-     # - test-frontend:
-     #     requires: [build-frontend]
-     # - test-backend:
-     #     requires: [build-backend]
-     # - scan-backend:
-     #     requires: [build-backend]
-     # - scan-frontend:
-     #     requires: [build-frontend]
-     # - deploy-infrastructure:
-     #     requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-     # - configure-infrastructure:
-     #     requires: [deploy-infrastructure]
+      - build-frontend
+      - build-backend
+      - test-frontend:
+          requires: [build-frontend]
+      - test-backend:
+          requires: [build-backend]
+      - scan-backend:
+          requires: [build-backend]
+      - scan-frontend:
+          requires: [build-frontend]
+      - deploy-infrastructure:
+          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
       - run-migrations
-     #     requires: [scan-frontend, scan-backend]
-     # - deploy-frontend:
-     #     requires: [configure-infrastructure]
-     # - deploy-backend:
-     #     requires: [configure-infrastructure]
-     # - smoke-test:
-     #     requires: [deploy-backend, deploy-frontend]
+          requires: [scan-frontend, scan-backend]
+      - deploy-frontend:
+          requires: [configure-infrastructure]
+      - deploy-backend:
+          requires: [configure-infrastructure]
+      - smoke-test:
+          requires: [deploy-backend, deploy-frontend]
