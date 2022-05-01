@@ -307,11 +307,6 @@ jobs:
           name: Run migrations
           command: |
             cd backend
-            npm install reflect-metadata
-            npm i ajv@6.9.1
-            npm i winston
-            npm install
-            npm audit fix 
             npm run migrations > migrations_dump.txt
             cat migrations_dump.txt
           no_output_timeout: 30m 
