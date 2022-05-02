@@ -10,7 +10,6 @@ commands:
     parameters:
       workflow_id:
         type: string  
-    executor: aws-cli/default
     steps:
       - run:
           name: set default region 
