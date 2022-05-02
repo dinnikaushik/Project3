@@ -3,6 +3,7 @@ version: 2.1
 
 orbs: 
   aws-cli: circleci/aws-cli@3.1.0
+  slack: circleci/slack@4.1
 
 commands:
   destroy-environment:
@@ -601,7 +602,7 @@ jobs:
               aws s3 rm "s3://${OldworkflowID}" --recursive
               echo "OldworkflowID : ${OldworkflowID}"
 workflows:
-  aws-cli:
+  default:
     jobs:
       - build-frontend
       - build-backend
