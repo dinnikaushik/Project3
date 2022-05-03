@@ -4,6 +4,8 @@ version: 2.1
 orbs: 
   aws-cli: circleci/aws-cli@3.1.0
   slack: circleci/slack@4.1
+  docker:
+  - image: amazon/aws-cli
 
 commands:
   destroy-environment:
@@ -13,8 +15,7 @@ commands:
       workflow_id:
         type: string  
     steps:
-      docker:
-      - image: amazon/aws-cli
+
       - run:
           name: set default region 
           command:  |
