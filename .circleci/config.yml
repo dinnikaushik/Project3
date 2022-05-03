@@ -7,20 +7,16 @@ orbs:
 
 commands:
   destroy-environment:
-
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     parameters:
       workflow_id:
         type: string  
     steps:
       - run:
-          name: set default region 
-          command:  |
-            aws configure set default.region us-west-2    
-      - run:
           name: Delete s3 bucket
           when: on_fail
           command: |
+            aws configure set default.region us-west-2
             aws s3 rb s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --force
             exit 0    
       - run:
@@ -28,6 +24,7 @@ commands:
           when: on_fail
           command: |
             echo "Destroying environment: ${CIRCLE_WORKFLOW_ID}"  
+            aws configure set default.region us-west-2
             aws cloudformation delete-stack --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"
             aws cloudformation delete-stack --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"
 #            exit 1
