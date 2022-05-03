@@ -7,14 +7,13 @@ orbs:
 
 commands:
   destroy-environment:
+    docker:
+    - image: amazon/aws-cli
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     parameters:
       workflow_id:
         type: string  
-    docker:
-    - image: amazon/aws-cli    
     steps:
-      
       - run:
           name: set default region 
           command:  |
