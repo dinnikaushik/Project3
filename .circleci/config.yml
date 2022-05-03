@@ -281,7 +281,10 @@ jobs:
       - checkout 
       - restore_cache:
           key: backend-build
-      
+      - run:
+          name: set default region 
+          command:  |
+            aws configure set default.region us-west-2          
       - run:
             name: enviroments
             
@@ -469,6 +472,10 @@ jobs:
     steps:
       # Checkout code from git
       - checkout
+      - run:
+          name: set default region 
+          command:  |
+            aws configure set default.region us-west-2      
       - run:
           name: Install dependencies
           command: |
